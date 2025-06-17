@@ -27,12 +27,18 @@ uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
 
+    st.write("Uploaded columns:", df.columns.tolist())
+
     # Clean monetary columns
     df["Payment Amount"] = df["Payment Amount"].replace('[\$,]', '', regex=True).astype(float)
     df["Balance"] = df["Balance"].replace('[\$,]', '', regex=True).astype(float)
 
-    # Label denial
-    df["Denied"] = df["Denial Reason"].apply(lambda x: 0 if pd.isna(x) or x == "" else 1)
+    # Ensure 'Denial Reason' exists
+    if "Denial Reason" in df.columns:
+        df["Denied"] = df["Denial Reason"].apply(lambda x: 0 if pd.isna(x) or x == "" else 1)
+    else:
+        st.error("❌ The uploaded file must contain a 'Denial Reason' column.")
+        st.stop()
 
     # Encode categorical columns
     df["CPT Code Encoded"] = le_cpt.transform(df["CPT Code"])
@@ -63,3 +69,4 @@ if uploaded_file:
         st.dataframe(top, use_container_width=True)
     else:
         st.success("No predicted denials in the uploaded file.")
+
