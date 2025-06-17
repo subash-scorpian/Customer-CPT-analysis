@@ -7,15 +7,15 @@ import os
 # Load model and encoders
 @st.cache_resource
 def load_model():
-    with open("models/model1.pkl", "rb") as f:
+    with open("model1.pkl", "rb") as f:
         model = pickle.load(f)
-    with open("models/le_cpt.pkl", "rb") as f:
+    with open("le_cpt.pkl", "rb") as f:
         le_cpt = pickle.load(f)
-    with open("models/le_ins.pkl", "rb") as f:
+    with open("le_ins.pkl", "rb") as f:
         le_ins = pickle.load(f)
-    with open("models/le_phys.pkl", "rb") as f:
+    with open("le_phys.pkl", "rb") as f:
         le_phys = pickle.load(f)
-    return model, le_cpt, le_ins, le_phys
+    return model1, le_cpt, le_ins, le_phys
 
 model, le_cpt, le_ins, le_phys = load_model()
 
