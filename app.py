@@ -39,8 +39,11 @@ if uploaded_file:
     df["Insurance Encoded"] = le_ins.transform(df["Insurance Company"])
     df["Physician Encoded"] = le_phys.transform(df["Physician Name"])
 
-    X = df[["CPT Code Encoded", "Insurance Encoded", "Physician Encoded", "Payment Amount", "Balance"]]
+    # Use the same feature columns as during training
+    feature_cols = ["CPT Code Encoded", "Insurance Encoded", "Physician Encoded", "Payment Amount", "Balance"]
+    X = df[feature_cols]
 
+    # Make prediction
     df["Prediction"] = model.predict(X)
 
     # Filter predicted denials
