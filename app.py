@@ -27,18 +27,20 @@ uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
 
-    st.write("Uploaded columns:", df.columns.tolist())
+    # Show column names for debug
+    st.write("Detected columns:", df.columns.tolist())
 
     # Clean monetary columns
-    df["Payment Amount"] = df["Payment Amount"].replace('[\$,]', '', regex=True).astype(float)
-    df["Balance"] = df["Balance"].replace('[\$,]', '', regex=True).astype(float)
+    if "Payment Amount" in df.columns and "Balance" in df.columns:
+        df["Payment Amount"] = df["Payment Amount"].replace('[\$,]', '', regex=True).astype(float)
+        df["Balance"] = df["Balance"].replace('[\$,]', '', regex=True).astype(float)
 
-    # Ensure 'Denial Reason' exists
+    # Label denial safely
     if "Denial Reason" in df.columns:
         df["Denied"] = df["Denial Reason"].apply(lambda x: 0 if pd.isna(x) or x == "" else 1)
     else:
-        st.error("❌ The uploaded file must contain a 'Denial Reason' column.")
-        st.stop()
+        df["Denied"] = 0
+        df["Denial Reason"] = ""
 
     # Encode categorical columns
     df["CPT Code Encoded"] = le_cpt.transform(df["CPT Code"])
@@ -50,7 +52,7 @@ if uploaded_file:
     X = df[feature_cols]
 
     # Make prediction
-    df["Prediction"] = model.predict(X)
+    df["Prediction"] = model.predict(X.values)
 
     # Filter predicted denials
     denied_df = df[df["Prediction"] == 1]
@@ -69,4 +71,5 @@ if uploaded_file:
         st.dataframe(top, use_container_width=True)
     else:
         st.success("No predicted denials in the uploaded file.")
+
 
