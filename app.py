@@ -15,7 +15,7 @@ def load_model():
         le_ins = pickle.load(f)
     with open("le_phys.pkl", "rb") as f:
         le_phys = pickle.load(f)
-    return model1, le_cpt, le_ins, le_phys
+    return model, le_cpt, le_ins, le_phys
 
 model, le_cpt, le_ins, le_phys = load_model()
 
